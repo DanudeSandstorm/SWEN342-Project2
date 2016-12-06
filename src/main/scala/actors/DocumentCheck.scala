@@ -8,10 +8,12 @@ class DocumentCheck(queue: Actor) extends Actor{
   
   def checkDocument(d: Document){
     if(d.isValid){
-      sender() ! new PassFailMsg(queue, true);
+      println("Valid Document");
+//      sender() ! new PassFailMsg(queue, true);
     }
     else{
-      sender() ! new PassFailMsg(null, false);
+      println("Invalid Document");
+//      sender() ! new PassFailMsg(null, false);
     }
   }
   

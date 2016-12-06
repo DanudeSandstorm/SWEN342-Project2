@@ -10,6 +10,7 @@ object Main {
     val myActor = system.actorOf(Props(new DocumentCheck(null)), "docCheck")
     
     myActor ! new Document(false);
+    myActor ! new Document(true);
     
     println("Hello, world!")
   }
