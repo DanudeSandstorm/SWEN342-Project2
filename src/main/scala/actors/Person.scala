@@ -1,8 +1,9 @@
 package actors
 
 import akka.actor.Actor
+
 import scala.util.Random
-import messages.{Document, Bag, Body}
+import messages._
 
 class Person extends Actor {
 
@@ -10,8 +11,23 @@ class Person extends Actor {
   val body = new Body(Random.nextDouble() > 0.2)
   val bag = new Bag(Random.nextDouble() > 0.2)
 
+
   def receive = {
+    case x: PassFailMsg => returnDocument(x)
+    case _: Fly => goFly()
     case _      => ()
+  }
+
+  def returnDocument(x: PassFailMsg) {
+    if (x.pass) {
+
+    } else {
+      context.stop(self)
+    }
+  }
+
+  def goFly() {
+    context.stop(self)
   }
 
 }

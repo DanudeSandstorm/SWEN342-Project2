@@ -2,4 +2,4 @@ package messages
 
 import akka.actor.Actor;
 
-class PassFailMsg(person: Actor, pass: Boolean)
+class PassFailMsg(val person: Actor, val pass: Boolean)
