@@ -1,5 +1,3 @@
 package messages
 
-class Body {
-
-}
+class Body (val isValid: Boolean)
