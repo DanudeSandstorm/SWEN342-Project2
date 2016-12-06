@@ -1,5 +1,3 @@
 package messages
 
-class Bag {
-
-}
+class Bag (val isValid: Boolean)
