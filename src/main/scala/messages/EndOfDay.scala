@@ -1,5 +1,3 @@
 package messages
 
-class EndOfDay {
-
-}
+class EndOfDay()
