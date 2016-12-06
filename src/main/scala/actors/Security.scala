@@ -1,3 +1,9 @@
-class Security {
+import akka.actor.Actor
+
+class Security extends Actor {
+
+  def receive = {
+    case _      => ()
+  }
 
 }
