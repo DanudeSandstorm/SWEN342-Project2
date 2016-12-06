@@ -2,6 +2,7 @@ import akka.actor.Props
 import akka.actor.ActorSystem
 import actors.DocumentCheck
 import messages.Document
+import akka.actor.PoisonPill
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -11,7 +12,11 @@ object Main {
     
     myActor ! new Document(false);
     myActor ! new Document(true);
+    myActor ! new Document(true);
     
-    println("Hello, world!")
+    
+    myActor ! PoisonPill
+    system.terminate();
+    println("Hello, world!");
   }
 }
