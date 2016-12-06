@@ -1,0 +1,8 @@
+/bin
+*.swp
+/.idea
+*.iml
+*.swo
+*.class
+/target
+/project
