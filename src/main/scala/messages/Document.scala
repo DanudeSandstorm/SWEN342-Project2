@@ -1,5 +1,3 @@
 package messages
 
-class Document {
-
-}
+class Document (val isValid: Boolean)

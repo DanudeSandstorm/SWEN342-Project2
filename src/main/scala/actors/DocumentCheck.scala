@@ -1,9 +1,23 @@
 package actors
 
 import akka.actor.Actor
-import akka.actor.Actor.Receive
-import akka.actor.Props
+import messages.Document
+import messages.PassFailMsg
 
-class DocumentCheck extends Actor{
-  override def receive: Receive = ???
+class DocumentCheck(queue: Actor) extends Actor{
+  
+  def checkDocument(d: Document){
+    if(d.isValid){
+      sender() ! new PassFailMsg(queue, true);
+    }
+    else{
+      sender() ! new PassFailMsg(null, false);
+    }
+  }
+  
+  def receive = {
+    case x : Document => checkDocument(x);
+    case _ => ;
+  }
+  
 }

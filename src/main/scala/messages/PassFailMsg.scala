@@ -1,5 +1,5 @@
 package messages
 
-class PassFailMsg {
+import akka.actor.Actor;
 
-}
+class PassFailMsg(person: Actor, pass: Boolean)
