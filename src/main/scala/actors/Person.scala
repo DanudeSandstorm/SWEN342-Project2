@@ -13,14 +13,15 @@ class Person extends Actor {
 
 
   def receive = {
-    case x: PassFailMsg => returnDocument(x)
+    case _: StartPerson => sender ! document
+    case x: DocPassFail => returnDocument(x)
     case _: Fly => goFly()
     case _      => ()
   }
 
-  def returnDocument(x: PassFailMsg) {
+  def returnDocument(x: PassFailAbstract) {
     if (x.pass) {
-
+        x.actor_ref.tell(self, self)
     } else {
       context.stop(self)
     }

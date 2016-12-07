@@ -2,7 +2,6 @@ package actors
 
 import akka.actor.Actor
 import messages.Document
-import messages.PassFailMsg
 
 class DocumentCheck(queue: Actor) extends Actor{
   
