@@ -1,6 +1,6 @@
 package actors
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{Actor, ActorRef, PoisonPill}
 import messages.{EndOfDay, GoToJail}
 
 import scala.collection.mutable.Queue
@@ -18,6 +18,7 @@ class Jail extends Actor {
   def endOfDay(): Unit = {
     for (person <- jailed)  {
       //goto jail
+      person.tell(PoisonPill, self)
     }
   }
 
