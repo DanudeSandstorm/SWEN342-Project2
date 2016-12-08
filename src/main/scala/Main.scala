@@ -10,7 +10,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     
     val system = ActorSystem("mySystem")
-    val documentCheck = system.actorOf(Props(new DocumentCheck(null)), "docCheck");
+    val documentCheck = system.actorOf(Props(new DocumentCheck(null, 0)), "docCheck")
     
     for(x <- 0 to 29){
       val person = system.actorOf(Props(new Person()));
