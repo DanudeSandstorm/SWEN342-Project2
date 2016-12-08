@@ -14,7 +14,7 @@ class BagScan(security: ActorRef) extends Actor{
   }
 
   def endOfDay(x: EndOfDay): Unit = {
-    println(self.path.name + "has turned off.")
+    println(self.path.name + " has been turned off.")
     security.tell(x, self)
     self.tell(PoisonPill, self)
   }

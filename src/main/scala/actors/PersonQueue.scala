@@ -15,12 +15,13 @@ class PersonQueue(bagScan: ActorRef, bodyScan: ActorRef) extends Actor {
     println(self.path.name + " tells " + sender().path.name + " to put their bag in the bag scanner.")
     sender() ! new WhichBagScan(bagScan)
     if(empty){
+      empty = false
       sendNextPersonThroughBodyScanner()
     }
   }
 
   var empty = true
-  def sendNextPersonThroughBodyScanner(){
+  def sendNextPersonThroughBodyScanner() {
     if (personQueue.nonEmpty) {
       empty = false
       val nextPerson = personQueue.dequeue()
@@ -28,7 +29,6 @@ class PersonQueue(bagScan: ActorRef, bodyScan: ActorRef) extends Actor {
       nextPerson ! new WhichBodyScan(bodyScan)
     }
     else {
-      println("DAD")
       if (shutdown) {
         endOfDay(new EndOfDay())
       }

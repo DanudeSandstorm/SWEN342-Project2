@@ -25,7 +25,9 @@ object Main {
       val security = system.actorOf(Props(new Security(jail)), "SecurityStation" + i)
       val bagScanner = system.actorOf(Props(new BagScan(security)), "BagScanner" + i)
       val bodyScanner = system.actorOf(Props(new BodyScan(security)), "BodyScanner" + i)
-      queues += system.actorOf(Props(new PersonQueue(bagScanner, bodyScanner)), "Queue" + i)
+      val personQueue = system.actorOf(Props(new PersonQueue(bagScanner, bodyScanner)), "Queue" + i)
+      queues += personQueue
+      bodyScanner ! personQueue
     }
     
     val documentCheck = system.actorOf(Props(new DocumentCheck(queues, reaper)), "Document_Checker")
@@ -33,8 +35,6 @@ object Main {
     for(i <- 0 until numberOfPeople){
       val person = system.actorOf(Props(new Person()), "Person" + i)
       person ! new StartPerson(documentCheck)
-      
     }
-
   }
 }
