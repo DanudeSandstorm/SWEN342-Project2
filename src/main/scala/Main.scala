@@ -8,7 +8,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     
     val system = ActorSystem("mySystem")
-    val myActor = system.actorOf(Props(new DocumentCheck(null)), "docCheck")
+    val myActor = system.actorOf(Props(new DocumentCheck(null, 0)), "docCheck")
     
     myActor ! new Document(false);
     myActor ! new Document(true);
