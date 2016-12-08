@@ -16,8 +16,6 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef], reaper: ActorRef) ext
   }
 
   def checkDocument(d: Document){
-    reaper.tell(new Increase, self)
-
     if(d.isValid){
       val queue = nextQueue;
       println(self.path.name + " tells " + sender().path.name + " to wait in " + queue.path.name);
@@ -27,23 +25,24 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef], reaper: ActorRef) ext
       println(self.path.name + " tells passenger they have an invalid document");
       sender() ! new DocPassFail(null, false);
     }
+
+    reaper.tell(new Increase, self)
   }
 
-  var n = queues.length
   var i = 0
-  
   def nextQueue: ActorRef = {
-    if (i >= n){
+    if (i >= queues.length){
       i = 0
     }
     val queue = queues.get(i)
     i += 1
-    return queue.get
+    queue.get
   }
 
   def endOfDay(x: EndOfDay): Unit = {
     for (queue <- queues) {
-      queue.tell(x, self)
+      println(self.path.name + " tells " + queue.path.name + " to begin shutting down.")
+      queue.tell(new EndOfDay(), self)
     }
     self ! PoisonPill
   }

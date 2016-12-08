@@ -26,7 +26,7 @@ class Person extends Actor {
   def goToQueue(x: DocPassFail) {
     if (x.pass) {
         printf(self.path.name + " enters " + x.actor_ref.path.name + ".\n")
-        x.actor_ref ! this //Sends self to queue
+        x.actor_ref ! self //Sends self to queue
     } else {
       println(self.path.name + " is turned away at document check.")
       self.tell(PoisonPill, self)

@@ -9,36 +9,48 @@ class PersonQueue(bagScan: ActorRef, bodyScan: ActorRef) extends Actor {
 
   val personQueue = mutable.Queue[ActorRef]()
 
-  def addToQueue(person: Person){
-    personQueue.enqueue(sender());
+  def addToQueue() {
+    personQueue.enqueue(sender())
 
-    println(self.path.name + " tells " + sender().path.name + " to put their bag in the bag scanner.");
+    println(self.path.name + " tells " + sender().path.name + " to put their bag in the bag scanner.")
     sender() ! new WhichBagScan(bagScan)
     if(personQueue.length == 1){
       sendNextPersonThroughBodyScanner()
     }
   }
-  
+
+  var empty = true
   def sendNextPersonThroughBodyScanner(){
     if (personQueue.nonEmpty) {
+      empty = false
       val nextPerson = personQueue.dequeue()
       println(self.path.name + " signals " + nextPerson.path.name + " to step into the body scanner.")
       nextPerson ! new WhichBodyScan(bodyScan)
     }
+    else {
+      println("DAD")
+      empty = true
+      if (shutdown) {
+        endOfDay(new EndOfDay())
+      }
+    }
   }
   
   def receive = {
-    case x: Person => addToQueue(x) 
+    case _: ActorRef => addToQueue()
     case _: BodyScannerReady => sendNextPersonThroughBodyScanner()
-    case x: EndOfDay => endOfDay(x)
+    case x: EndOfDay => shutdown = true; endOfDay(x)
     case _      => ()
   }
 
+  var shutdown = false
   def endOfDay(x: EndOfDay): Unit = {
-    bagScan.tell(x, self)
-    //bodyScan.tell(x, self)
-    self.tell(PoisonPill, self)
+    if (empty) {
+      println(self.path.name + " signals " + bodyScan.path.name + " and " + bodyScan.path.name + " to shut down.")
+      bagScan.tell(x, self)
+      bodyScan.tell(x, self)
+      self.tell(PoisonPill, self)
+    }
   }
-
 
 }
