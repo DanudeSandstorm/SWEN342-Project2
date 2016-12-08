@@ -8,7 +8,7 @@ import scala.collection.immutable.Queue
 
 
 class DocumentCheck(queues: mutable.MutableList[ActorRef]) extends Actor{
-
+  
 
   def checkDocument(d: Document){
     if(d.isValid){
@@ -20,7 +20,7 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef]) extends Actor{
       sender() ! new DocPassFail(null, false);
     }
   }
-
+  
   def receive = {
     case x : Document => checkDocument(x);
     case _ => ;
@@ -28,7 +28,7 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef]) extends Actor{
 
   var n = queues.length
   var i = 0
-
+  
   def nextQueue: ActorRef = {
     if (i >= n){
       i = 0
