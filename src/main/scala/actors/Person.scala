@@ -14,7 +14,7 @@ class Person extends Actor {
 
 
   def receive = {
-    case x: StartPerson => printf(self.path.name + " gives Document to the document checker.\n");
+    case x: StartPerson => printf(self.path.name + " gives document to the document checker.\n");
       x.actor_ref.tell(document, self)
     case x: DocPassFail => goToQueue(x)
     case x: WhichBagScan => x.actor_ref.tell(bag, self)

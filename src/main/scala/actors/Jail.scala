@@ -2,10 +2,9 @@ package actors
 
 import akka.actor.{Actor, ActorRef, PoisonPill}
 import messages.{EndOfDay, GoToJail}
-
 import scala.collection.mutable.Queue
 
-class Jail(reaper: ActorRef) extends Actor {
+class Jail(queues: Int, reaper: ActorRef) extends Actor {
 
   var jailed = new Queue[ActorRef]();
 
@@ -16,13 +15,17 @@ class Jail(reaper: ActorRef) extends Actor {
     case _      => ()
   }
 
+  var count = 0
   def endOfDay(x: EndOfDay): Unit = {
-    for (person <- jailed)  {
-      println(person.path.name + " has been transferred to permanent detention.")
-      person.tell(PoisonPill, self)
+    count += 1
+    if (count >= queues) {
+      for (person <- jailed) {
+        println(person.path.name + " has been transferred to permanent detention.")
+        person.tell(PoisonPill, self)
+      }
+      reaper.tell(x, self)
+      self ! PoisonPill
     }
-    reaper.tell(x, self)
-    self ! PoisonPill
   }
 
 }

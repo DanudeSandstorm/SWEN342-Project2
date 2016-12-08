@@ -3,12 +3,12 @@ package actors
 import akka.actor.{Actor, ActorRef, PoisonPill}
 import messages._
 
-import scala.collection.mutable.Queue
+import scala.collection.mutable
 
 
 class Security(jail: ActorRef) extends Actor {
 
-  var passed = new Queue[ActorRef]();
+  var scans = mutable.HashMap[ActorRef, Boolean]()
 
   def receive = {
     case x: BagPassFail => scannerResult(x)
@@ -18,16 +18,17 @@ class Security(jail: ActorRef) extends Actor {
   }
 
   def scannerResult(x: PassFailMsg) {
-    if (x.pass) {
-      if (passed.indexOf(x.actor_ref) >= 0) {
-        x.actor_ref.tell(new Fly(), self)
-      }
-      else {
-        passed += x.actor_ref
-      }
+    if (scans.get(x.actor_ref).isEmpty) {
+      scans.put(x.actor_ref, x.pass)
     }
     else {
-      jail.tell(new GoToJail(x.actor_ref), self)
+      //If either didn't pass
+      if (!(scans(x.actor_ref) && x.pass)) {
+        jail ! new GoToJail(x.actor_ref)
+      }
+      else {
+        x.actor_ref ! new Fly()
+      }
     }
   }
 
