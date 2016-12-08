@@ -13,7 +13,7 @@ class Person extends Actor {
 
 
   def receive = {
-    case _: StartPerson => sender ! document
+    case x: StartPerson => x .actor_ref ! document
     case x: DocPassFail => returnDocument(x)
     case _: Fly => goFly()
     case _      => ()

@@ -3,20 +3,23 @@ import akka.actor.ActorSystem
 import actors.DocumentCheck
 import messages.Document
 import akka.actor.PoisonPill
+import actors.Person
+import messages.StartPerson
 
 object Main {
   def main(args: Array[String]): Unit = {
     
     val system = ActorSystem("mySystem")
-    val myActor = system.actorOf(Props(new DocumentCheck(null)), "docCheck")
+    val documentCheck = system.actorOf(Props(new DocumentCheck(null)), "docCheck");
     
-    myActor ! new Document(false);
-    myActor ! new Document(true);
-    myActor ! new Document(true);
+    for(x <- 0 to 29){
+      val person = system.actorOf(Props(new Person()));
+      person ! new StartPerson(documentCheck);
+    }
     
+    documentCheck ! PoisonPill
+    Thread.sleep(5000)
+    system.terminate()
     
-    myActor ! PoisonPill
-    system.terminate();
-    println("Hello, world!");
   }
 }
