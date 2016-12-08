@@ -18,7 +18,7 @@ class Person extends Actor {
     case x: DocPassFail => goToQueue(x)
     case x: WhichBagScan => x.actor_ref.tell(bag, self)
     case x: WhichBodyScan => x.actor_ref.tell(body, self)
-    case _: Fly => ()
+    case _: Fly => self.tell(PoisonPill, self)
     case _      => ()
   }
 
@@ -27,7 +27,7 @@ class Person extends Actor {
         printf(self.path.name + ": Entering " + x.actor_ref.path.name + "\n");
         x.actor_ref ! this //Sends self to queue
     } else {
-      context.stop(self)
+      self.tell(PoisonPill, self)
     }
   }
 

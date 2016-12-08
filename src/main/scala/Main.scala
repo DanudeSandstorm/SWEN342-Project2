@@ -1,22 +1,26 @@
 import akka.actor.Props
 import akka.actor.ActorSystem
-import actors.DocumentCheck
+import actors._
 import messages.Document
 import akka.actor.PoisonPill
-import actors.Person
 import messages.StartPerson
-import actors.{PersonQueue, BagScan, BodyScan, Jail, Security}
+
 import scala.collection.mutable
 import akka.actor.ActorRef
 
 object Main {
   val numberOfQueues = 3;
+  val numberOfPeople = 10
   
   def main(args: Array[String]): Unit = {
     
     val system = ActorSystem("mySystem")
-    
-    val jail = system.actorOf(Props(new Jail()));
+
+    //Ends the system when done
+    val reaper = system.actorOf(Props(new Reaper(numberOfPeople, system)))
+
+    val jail = system.actorOf(Props(new Jail(reaper)));
+
     val security = system.actorOf(Props(new Security(jail)));
     
     val queues = mutable.MutableList[ActorRef]()
@@ -26,18 +30,13 @@ object Main {
       queues += system.actorOf(Props(new PersonQueue(bagScanner, bodyScanner)), "Queue"+i);
     }
     
-    val documentCheck = system.actorOf(Props(new DocumentCheck(queues)), "docCheck")
-    for(x <- 0 to 10){
+    val documentCheck = system.actorOf(Props(new DocumentCheck(queues, reaper)), "docCheck")
+    for(x <- 0 until numberOfPeople){
       
       val person = system.actorOf(Props(new Person()), "Person".concat(x.toString()) );
       person ! new StartPerson(documentCheck);
       
     }
-    
-    Thread.sleep(1000)
-//    documentCheck ! PoisonPill
-    Thread.sleep(1000)
-    system.terminate()
-    
+
   }
 }
