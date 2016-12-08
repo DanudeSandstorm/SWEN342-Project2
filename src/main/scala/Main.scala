@@ -6,12 +6,23 @@ import akka.actor.PoisonPill
 import actors.Person
 import messages.StartPerson
 import actors.PersonQueue
+import scala.collection.mutable
+import akka.actor.ActorRef
 
 object Main {
+  val numberOfQueues = 10;
+  
   def main(args: Array[String]): Unit = {
     
     val system = ActorSystem("mySystem")
-    val documentCheck = system.actorOf(Props(new DocumentCheck(0)), "docCheck")
+    
+    val queues = mutable.MutableList[ActorRef]()
+    var i = 0
+    for (i <- 0 until numberOfQueues) {
+      queues += system.actorOf(Props(new PersonQueue()));
+    }
+    
+    val documentCheck = system.actorOf(Props(new DocumentCheck(queues)), "docCheck")
     for(x <- 0 to 100){
       
       val person = system.actorOf(Props(new Person()), "Person".concat(x.toString()) );
