@@ -10,37 +10,23 @@ class Security extends Actor {
   var passed = new Queue[ActorRef]();
 
   def receive = {
-    case x: BagPassFail => bagChecked(x)
-    case x: BodyPassFail => bodyChecked(x)
+    case x: BagPassFail => scannerResult(x)
+    case x: BodyPassFail => scannerResult(x)
     case _      => ()
   }
 
-  def bagChecked(x: PassFailMsg) {
+  def scannerResult(x: PassFailMsg) {
     if (x.pass) {
-//      if (passed.find(x.actor_ref)) {
-//        pass(x.actor_ref)
+      //      if (passed.find(x.actor_ref)) {
+      //         x.tell(new Fly(),self)
+      //      }
+      // else {
+//          passed += x.actor_ref
 //      }
-
-      x.actor_ref.tell(self, self) //Sends self to queue
-    } else {
-      jail(x.actor_ref)
     }
-  }
-
-  def bodyChecked(x: PassFailMsg) {
-    if (x.pass) {
-      x.actor_ref.tell(self, self) //Sends self to queue
-    } else {
-      jail(x.actor_ref)
+    else {
+      //jail//.tell(new GoToJail(x));
     }
-  }
-
-  def pass(x: ActorRef): Unit = {
-    x.tell(new Fly(),self)
-  }
-
-  def jail(x: ActorRef): Unit = {
-    //jail//.tell(new GoToJail(x));
   }
 
 }
