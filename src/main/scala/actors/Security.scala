@@ -5,7 +5,7 @@ import messages.{BagPassFail, BodyPassFail, PassFailMsg, Fly}
 import scala.collection.mutable.Queue
 
 
-class Security extends Actor {
+class Security(jail: ActorRef) extends Actor {
 
   var passed = new Queue[ActorRef]();
 

@@ -5,7 +5,7 @@ import messages.Document
 import akka.actor.PoisonPill
 import actors.Person
 import messages.StartPerson
-import actors.{PersonQueue, BagScan, BodyScan}
+import actors.{PersonQueue, BagScan, BodyScan, Jail, Security}
 import scala.collection.mutable
 import akka.actor.ActorRef
 
@@ -16,10 +16,13 @@ object Main {
     
     val system = ActorSystem("mySystem")
     
+    val jail = system.actorOf(Props(new Jail()));
+    val security = system.actorOf(Props(new Security(jail)));
+    
     val queues = mutable.MutableList[ActorRef]()
     for (i <- 0 until numberOfQueues) {
-      val bagScanner = system.actorOf(Props(new BagScan()));
-      val bodyScanner = system.actorOf(Props(new BodyScan()));
+      val bagScanner = system.actorOf(Props(new BagScan(security)));
+      val bodyScanner = system.actorOf(Props(new BodyScan(security)));
       queues += system.actorOf(Props(new PersonQueue(bagScanner, bodyScanner)));
     }
     

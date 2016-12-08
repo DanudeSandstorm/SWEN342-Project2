@@ -1,8 +1,9 @@
 package actors
 
 import akka.actor.Actor
+import akka.actor.ActorRef
 
-class BagScan extends Actor{
+class BagScan(security: ActorRef) extends Actor{
 
   def receive = {
     case _      => ()

@@ -1,8 +1,9 @@
 package actors
 
 import akka.actor.Actor
+import akka.actor.ActorRef
 
-class BodyScan extends Actor {
+class BodyScan(security: ActorRef) extends Actor {
 
   def receive = {
     case _      => ()
