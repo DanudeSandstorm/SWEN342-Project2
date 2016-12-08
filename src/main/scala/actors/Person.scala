@@ -4,6 +4,7 @@ import akka.actor.Actor
 
 import scala.util.Random
 import messages._
+import akka.actor.PoisonPill
 
 class Person extends Actor {
 
@@ -17,7 +18,7 @@ class Person extends Actor {
     case x: DocPassFail => goToQueue(x)
     case x: WhichBagScan => x.actor_ref.tell(bag, self)
     case x: WhichBodyScan => x.actor_ref.tell(body, self)
-    case _: Fly => context.stop(self)
+    case _: Fly => ()
     case _      => ()
   }
 

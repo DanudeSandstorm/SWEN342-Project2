@@ -35,7 +35,7 @@ object Main {
     }
     
     Thread.sleep(1000)
-    documentCheck ! PoisonPill
+//    documentCheck ! PoisonPill
     Thread.sleep(1000)
     system.terminate()
     
