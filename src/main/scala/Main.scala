@@ -18,14 +18,13 @@ object Main {
     val reaper = system.actorOf(Props(new Reaper(numberOfPeople, system)))
 
     val jail = system.actorOf(Props(new Jail(numberOfQueues, reaper)))
-
-    val security = system.actorOf(Props(new Security(jail)))
     
     val queues = mutable.MutableList[ActorRef]()
 
     for (i <- 0 until numberOfQueues) {
-      val bagScanner = system.actorOf(Props(new BagScan(security)))
-      val bodyScanner = system.actorOf(Props(new BodyScan(security)))
+      val security = system.actorOf(Props(new Security(jail)), "SecurityStation" + i)
+      val bagScanner = system.actorOf(Props(new BagScan(security)), "BagScanner" + i)
+      val bodyScanner = system.actorOf(Props(new BodyScan(security)), "BodyScanner" + i)
       queues += system.actorOf(Props(new PersonQueue(bagScanner, bodyScanner)), "Queue" + i)
     }
     

@@ -17,13 +17,13 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef], reaper: ActorRef) ext
 
   def checkDocument(d: Document){
     if(d.isValid){
-      val queue = nextQueue;
-      println(self.path.name + " tells " + sender().path.name + " to wait in " + queue.path.name);
-      sender() ! new DocPassFail(queue, true);
+      val queue = nextQueue
+      println(self.path.name + " tells " + sender().path.name + " to wait in " + queue.path.name)
+      sender() ! new DocPassFail(queue, true)
     }
     else {
-      println(self.path.name + " tells passenger they have an invalid document");
-      sender() ! new DocPassFail(null, false);
+      println(self.path.name + " tells passenger they have an invalid document")
+      sender() ! new DocPassFail(null, false)
     }
 
     reaper.tell(new Increase, self)

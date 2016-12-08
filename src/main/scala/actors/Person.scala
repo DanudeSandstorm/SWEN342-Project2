@@ -17,8 +17,10 @@ class Person extends Actor {
     case x: StartPerson => printf(self.path.name + " gives document to the document checker.\n");
       x.actor_ref.tell(document, self)
     case x: DocPassFail => goToQueue(x)
-    case x: WhichBagScan => x.actor_ref.tell(bag, self)
-    case x: WhichBodyScan => x.actor_ref.tell(body, self)
+    case x: WhichBagScan => x.actor_ref.tell(bag, self); println(self.path.name +
+      " places their baggage into" + x.actor_ref.path.name + ".")
+    case x: WhichBodyScan => x.actor_ref.tell(body, self); println(self.path.name +
+      " walks into " + x.actor_ref.path.name + ".")
     case _: Fly => println(self.path.name + " has left the security area."); self.tell(PoisonPill, self)
     case _      => ()
   }
