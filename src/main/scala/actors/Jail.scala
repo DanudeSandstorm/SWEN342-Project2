@@ -10,17 +10,19 @@ class Jail(reaper: ActorRef) extends Actor {
   var jailed = new Queue[ActorRef]();
 
   def receive = {
-    case x : GoToJail => jailed += x.actor_ref
-    case _: EndOfDay => endOfDay()
+    case x : GoToJail => jailed += x.actor_ref;
+      println(x.actor_ref.path.name + " has been incarcerated to airport jail.")
+    case x: EndOfDay => endOfDay(x)
     case _      => ()
   }
 
-  def endOfDay(): Unit = {
+  def endOfDay(x: EndOfDay): Unit = {
     for (person <- jailed)  {
-      //goto jail
+      println(person.path.name + " has been transferred to permanent detention.")
       person.tell(PoisonPill, self)
     }
-    reaper.tell(new EndOfDay(), self)
+    reaper.tell(x, self)
+    self ! PoisonPill
   }
 
 }

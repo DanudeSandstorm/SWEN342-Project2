@@ -1,6 +1,6 @@
 package actors
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{Actor, ActorRef, PoisonPill}
 
 import scala.collection.mutable
 import messages._
@@ -11,7 +11,7 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef], reaper: ActorRef) ext
   
   def receive = {
     case x : Document => checkDocument(x);
-    case _: EndOfDay => endOfDay();
+    case x: EndOfDay => endOfDay(x);
     case _ => ;
   }
 
@@ -20,11 +20,11 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef], reaper: ActorRef) ext
 
     if(d.isValid){
       val queue = nextQueue;
-      println(self.path.name + ": Telling " + sender().path.name + " to wait in " + queue.path.name);
+      println(self.path.name + " tells " + sender().path.name + " to wait in " + queue.path.name);
       sender() ! new DocPassFail(queue, true);
     }
-    else{
-      println(self.path.name + ": Telling passenger they have an invalid document");
+    else {
+      println(self.path.name + " tells passenger they have an invalid document");
       sender() ! new DocPassFail(null, false);
     }
   }
@@ -41,10 +41,11 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef], reaper: ActorRef) ext
     return queue.get
   }
 
-  def endOfDay(): Unit = {
+  def endOfDay(x: EndOfDay): Unit = {
     for (queue <- queues) {
-      queue.tell(new EndOfDay, self)
+      queue.tell(x, self)
     }
+    self ! PoisonPill
   }
 
 }

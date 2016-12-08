@@ -1,7 +1,6 @@
 package actors
 
-import akka.actor.Actor
-import akka.actor.ActorRef
+import akka.actor.{Actor, ActorRef, PoisonPill}
 import messages.{Body, BodyPassFail, BodyScannerReady, EndOfDay}
 
 class BodyScan(security: ActorRef) extends Actor {
@@ -13,8 +12,13 @@ class BodyScan(security: ActorRef) extends Actor {
   
   def receive = {
     case x: Body => scanBody(x)
-    case x: EndOfDay => security.tell(x, self)
+    case x: EndOfDay => endOfDay(x)
     case _      => ()
+  }
+
+  def endOfDay(x: EndOfDay): Unit = {
+    security.tell(x, self)
+    self.tell(PoisonPill, self)
   }
 
 }
