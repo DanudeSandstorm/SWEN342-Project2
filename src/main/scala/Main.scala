@@ -6,7 +6,7 @@ import akka.actor.PoisonPill
 
 object Main {
   def main(args: Array[String]): Unit = {
-    
+
     val system = ActorSystem("mySystem")
     val myActor = system.actorOf(Props(new DocumentCheck(null, 0)), "docCheck")
     
