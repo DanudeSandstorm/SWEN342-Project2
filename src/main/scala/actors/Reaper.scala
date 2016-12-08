@@ -13,9 +13,9 @@ class Reaper(val people: Int, val system: ActorSystem) extends Actor{
     case _ => ()
   }
 
-  def checkPeople(x: ActorRef): Unit = {
+  def checkPeople(documentCheck: ActorRef): Unit = {
     count += 1
-    if (count >= people) x.tell(new EndOfDay(), self)
+    if (count >= people) documentCheck.tell(new EndOfDay(), self)
   }
 
 }

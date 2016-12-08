@@ -5,7 +5,7 @@ import messages.{EndOfDay, GoToJail}
 
 import scala.collection.mutable.Queue
 
-class Jail extends Actor {
+class Jail(reaper: ActorRef) extends Actor {
 
   var jailed = new Queue[ActorRef]();
 
@@ -20,6 +20,7 @@ class Jail extends Actor {
       //goto jail
       person.tell(PoisonPill, self)
     }
+    reaper.tell(new EndOfDay(), self)
   }
 
 }

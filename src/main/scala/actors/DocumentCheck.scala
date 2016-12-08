@@ -3,11 +3,17 @@ package actors
 import akka.actor.{Actor, ActorRef}
 
 import scala.collection.mutable
-import messages.{DocPassFail, Document, Increase, StartPerson}
+import messages._
 
 
 class DocumentCheck(queues: mutable.MutableList[ActorRef], reaper: ActorRef) extends Actor{
+
   
+  def receive = {
+    case x : Document => checkDocument(x);
+    case _: EndOfDay => endOfDay();
+    case _ => ;
+  }
 
   def checkDocument(d: Document){
     reaper.tell(new Increase, self)
@@ -22,11 +28,6 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef], reaper: ActorRef) ext
       sender() ! new DocPassFail(null, false);
     }
   }
-  
-  def receive = {
-    case x : Document => checkDocument(x);
-    case _ => ;
-  }
 
   var n = queues.length
   var i = 0
@@ -39,4 +40,11 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef], reaper: ActorRef) ext
     i += 1
     return queue.get
   }
+
+  def endOfDay(): Unit = {
+    for (queue <- queues) {
+      queue.tell(new EndOfDay, self)
+    }
+  }
+
 }
