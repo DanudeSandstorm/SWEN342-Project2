@@ -13,7 +13,7 @@ class Person extends Actor {
 
 
   def receive = {
-    case x: StartPerson => x.actor_ref.tell(document, self)
+    case x: StartPerson => printf(self.path.name + ": Giving Document to DocCheck\n"); x.actor_ref.tell(document, self)
     case x: DocPassFail => goToQueue(x)
     case x: WhichBagScan => x.actor_ref.tell(bag, self)
     case x: WhichBodyScan => x.actor_ref.tell(body, self)
@@ -23,6 +23,7 @@ class Person extends Actor {
 
   def goToQueue(x: DocPassFail) {
     if (x.pass) {
+        printf(self.path.name + ": Entering " + x.actor_ref.path.name + "\n");
         x.actor_ref ! this //Sends self to queue
     } else {
       context.stop(self)

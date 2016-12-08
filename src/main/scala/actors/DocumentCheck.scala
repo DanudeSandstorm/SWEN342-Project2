@@ -12,11 +12,12 @@ class DocumentCheck(queues: mutable.MutableList[ActorRef]) extends Actor{
 
   def checkDocument(d: Document){
     if(d.isValid){
-      println("Valid Document");
-      sender() ! new DocPassFail(nextQueue, true);
+      val queue = nextQueue;
+      println(self.path.name + ": Telling " + sender().path.name + " to wait in " + queue.path.name);
+      sender() ! new DocPassFail(queue, true);
     }
     else{
-      println("Invalid Document");
+      println(self.path.name + ": Telling passenger they have an invalid document");
       sender() ! new DocPassFail(null, false);
     }
   }

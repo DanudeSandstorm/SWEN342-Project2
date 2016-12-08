@@ -13,8 +13,8 @@ class PersonQueue(bagScan: ActorRef, bodyScan: ActorRef) extends Actor {
   
   def addToQueue(person: Person){
     personQueue.enqueue(sender());
-    printf("Person " + person.toString() + " Queued!\n");
-    
+
+    println(self.path.name + ": telling " + sender().path.name + " to put their bag in the scanner");
     sender() ! new WhichBagScan(bagScan)
     if(personQueue.length == 1){
       sendNextPersonThroughBodyScanner()
@@ -22,7 +22,9 @@ class PersonQueue(bagScan: ActorRef, bodyScan: ActorRef) extends Actor {
   }
   
   def sendNextPersonThroughBodyScanner(){
-    personQueue.dequeue() ! new WhichBodyScan(bodyScan)
+    val nextPerson = personQueue.dequeue()
+    println(self.path.name + ": telling " + nextPerson.path.name + " to step into the bodyscanner");
+    nextPerson ! new WhichBodyScan(bodyScan)
   }
   
   def receive = {

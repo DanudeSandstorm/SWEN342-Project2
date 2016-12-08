@@ -10,7 +10,7 @@ import scala.collection.mutable
 import akka.actor.ActorRef
 
 object Main {
-  val numberOfQueues = 10;
+  val numberOfQueues = 3;
   
   def main(args: Array[String]): Unit = {
     
@@ -23,11 +23,11 @@ object Main {
     for (i <- 0 until numberOfQueues) {
       val bagScanner = system.actorOf(Props(new BagScan(security)));
       val bodyScanner = system.actorOf(Props(new BodyScan(security)));
-      queues += system.actorOf(Props(new PersonQueue(bagScanner, bodyScanner)));
+      queues += system.actorOf(Props(new PersonQueue(bagScanner, bodyScanner)), "Queue"+i);
     }
     
     val documentCheck = system.actorOf(Props(new DocumentCheck(queues)), "docCheck")
-    for(x <- 0 to 100){
+    for(x <- 0 to 10){
       
       val person = system.actorOf(Props(new Person()), "Person".concat(x.toString()) );
       person ! new StartPerson(documentCheck);
