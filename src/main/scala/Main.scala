@@ -12,14 +12,16 @@ object Main {
     
     val system = ActorSystem("mySystem")
     val documentCheck = system.actorOf(Props(new DocumentCheck(0)), "docCheck")
-    
-    for(x <- 0 to 29){
-      val person = system.actorOf(Props(new Person()));
+    for(x <- 0 to 100){
+      
+      val person = system.actorOf(Props(new Person()), "Person".concat(x.toString()) );
       person ! new StartPerson(documentCheck);
+      
     }
     
+    Thread.sleep(100)
     documentCheck ! PoisonPill
-    Thread.sleep(5000)
+    Thread.sleep(1900)
     system.terminate()
     
   }
