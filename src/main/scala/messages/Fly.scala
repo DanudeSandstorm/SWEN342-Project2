@@ -1,3 +1,3 @@
 package messages
 
-class Fly ()
+class Fly()
