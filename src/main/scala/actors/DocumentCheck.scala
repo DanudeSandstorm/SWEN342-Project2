@@ -3,14 +3,15 @@ package actors
 import akka.actor.{Actor, ActorRef}
 
 import scala.collection.mutable
-import messages.{Document, StartPerson,DocPassFail}
-import scala.collection.immutable.Queue
+import messages.{DocPassFail, Document, Increase, StartPerson}
 
 
-class DocumentCheck(queues: mutable.MutableList[ActorRef]) extends Actor{
+class DocumentCheck(queues: mutable.MutableList[ActorRef], reaper: ActorRef) extends Actor{
   
 
   def checkDocument(d: Document){
+    reaper.tell(new Increase, self)
+
     if(d.isValid){
       val queue = nextQueue;
       println(self.path.name + ": Telling " + sender().path.name + " to wait in " + queue.path.name);
