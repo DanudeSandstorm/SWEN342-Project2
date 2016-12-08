@@ -13,7 +13,7 @@ class Person extends Actor {
 
 
   def receive = {
-    case x: StartPerson => x .actor_ref ! document
+    case x: StartPerson => x.actor_ref ! document
     case x: DocPassFail => goToQueue(x)
     case x: WhichBagScan => x.actor_ref.tell(bag, self)
     case x: WhichBodyScan => x.actor_ref.tell(body, self)

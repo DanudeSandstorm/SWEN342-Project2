@@ -8,8 +8,8 @@ import messages.{Document, StartPerson}
 import scala.collection.immutable.Queue
 
 
-class DocumentCheck(people: Queue[ActorRef], n: Int) extends Actor {
-
+//class DocumentCheck(people: Queue[ActorRef], n: Int) extends Actor {
+class DocumentCheck(n: Int) extends Actor{
   val queues = mutable.MutableList[PersonQueue]()
   var i = 0
   for (i <- 0 until n) {
@@ -17,8 +17,8 @@ class DocumentCheck(people: Queue[ActorRef], n: Int) extends Actor {
   }
   i = 0
 
-  //Starts all the people
-  for (person <- people) person ! new StartPerson(self)
+//  Starts all the people
+//  for (person <- people) person ! new StartPerson(self)
 
   def checkDocument(d: Document){
     if(d.isValid){
