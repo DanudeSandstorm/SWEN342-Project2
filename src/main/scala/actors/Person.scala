@@ -21,7 +21,7 @@ class Person extends Actor {
     case _      => ()
   }
 
-  def goToQueue(x: PassFailMsg) {
+  def goToQueue(x: DocPassFail) {
     if (x.pass) {
         x.actor_ref ! this //Sends self to queue
     } else {
