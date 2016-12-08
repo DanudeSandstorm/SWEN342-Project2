@@ -23,7 +23,7 @@ class Person extends Actor {
 
   def goToQueue(x: DocPassFail) {
     if (x.pass) {
-        x.actor_ref.tell(self, self) //Sends self to queue
+        x.actor_ref ! this //Sends self to queue
     } else {
       context.stop(self)
     }
