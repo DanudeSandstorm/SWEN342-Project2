@@ -9,11 +9,11 @@ object Main {
 
     val system = ActorSystem("mySystem")
     val myActor = system.actorOf(Props(new DocumentCheck(null, 0)), "docCheck")
-    
+
     myActor ! new Document(false);
     myActor ! new Document(true);
     myActor ! new Document(true);
-    
+
     
     myActor ! PoisonPill
     system.terminate();
