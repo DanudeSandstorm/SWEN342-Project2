@@ -23,11 +23,11 @@ class DocumentCheck(people: Queue[ActorRef], n: Int) extends Actor {
   def checkDocument(d: Document){
     if(d.isValid){
       println("Valid Document");
-//      sender() ! new PassFailMsg(nextQueue, true);
+//      sender() ! new DocPassFail(nextQueue, true);
     }
     else{
       println("Invalid Document");
-//      sender() ! new PassFailMsg(null, false);
+//      sender() ! new DocPassFail(null, false);
     }
   }
   

@@ -14,21 +14,19 @@ class Person extends Actor {
 
   def receive = {
     case _: StartPerson => sender ! document
-    case x: DocPassFail => returnDocument(x)
-    case _: Fly => goFly()
+    case x: DocPassFail => goToQueue(x)
+    case x: WhichBagScan => x.actor_ref.tell(bag, self)
+    case x: WhichBodyScan => x.actor_ref.tell(body, self)
+    case _: Fly => context.stop(self)
     case _      => ()
   }
 
-  def returnDocument(x: PassFailAbstract) {
+  def goToQueue(x: PassFailMsg) {
     if (x.pass) {
-        x.actor_ref.tell(self, self)
+        x.actor_ref.tell(self, self) //Sends self to queue
     } else {
       context.stop(self)
     }
-  }
-
-  def goFly() {
-    context.stop(self)
   }
 
 }
