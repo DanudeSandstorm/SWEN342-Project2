@@ -1,7 +1,8 @@
 package actors
 
 import akka.actor.{Actor, ActorRef}
-import messages.{BagPassFail, BodyPassFail, PassFailMsg, Fly}
+import messages._
+
 import scala.collection.mutable.Queue
 
 
@@ -17,15 +18,15 @@ class Security(jail: ActorRef) extends Actor {
 
   def scannerResult(x: PassFailMsg) {
     if (x.pass) {
-      //      if (passed.find(x.actor_ref)) {
-      //         x.tell(new Fly(),self)
-      //      }
-      // else {
-//          passed += x.actor_ref
-//      }
+      if (passed.indexOf(x.actor_ref) != None) {
+        x.actor_ref.tell(new Fly(), self)
+      }
+      else {
+        passed += x.actor_ref
+      }
     }
     else {
-      //jail//.tell(new GoToJail(x));
+      jail.tell(new GoToJail(x.actor_ref), self)
     }
   }
 
