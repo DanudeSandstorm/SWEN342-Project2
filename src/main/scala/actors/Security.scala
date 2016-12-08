@@ -18,7 +18,7 @@ class Security(jail: ActorRef) extends Actor {
 
   def scannerResult(x: PassFailMsg) {
     if (x.pass) {
-      if (passed.indexOf(x.actor_ref) != None) {
+      if (passed.indexOf(x.actor_ref) >= 0) {
         x.actor_ref.tell(new Fly(), self)
       }
       else {
